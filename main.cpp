@@ -1,93 +1,152 @@
 #include <iostream>
-#include <cmath>
-#include <cstdint>
 
-class Power {
+//Task 1
+
+enum Gender {men, women};
+
+class Person {
 private:
-    int a;
-    int b;
+    std::string m_name;
+    int m_age;
+    Gender m_gender;
+    float m_weight;
 public:
-    Power() { a = 5; b = 2;}
-    void set(int sa, int sb) { a = sa; b = sb; }
-    void calculate() { std::cout<< pow(a, b) << std::endl; }
+    Person(std::string name, int age, Gender gender, float weight) :
+    m_name(name), m_age(age), m_gender(gender), m_weight(weight) {}
+
+    void setName(std::string name = "")  { m_name = name; }
+
+    void setAge(int age = 0) { m_age = age; }
+
+    void setWeight(float weight = 0.0) { m_weight = weight; }
+
+    void print() const {
+        std::cout << "Name: " << m_name << std::endl
+            << "Age: " << m_age << std::endl
+            << "Gender: " << (m_gender == men ? "Male" : "Female") << std::endl
+            << "Weight: " << m_weight << std::endl;
+    }
 };
 
-class RGBA {
+class Student : public Person {
 private:
-    std::uint8_t m_red;
-    std::uint8_t m_green;
-    std::uint8_t m_blue;
-    std::uint8_t m_alpha;
+    static int count_stud;
+    int m_year;
 public:
-    RGBA(int red = 0, int green = 0, int blue = 0, int alpha = 255)
-    : m_red(red), m_green(green), m_blue(blue), m_alpha(alpha)
-    {}
-    void print() { std::cout << "red = "<< (int)m_red << ", green = " << (int)m_green << ", blue = " << (int)m_blue << ", alpha = " << (int)m_alpha<< "." << std::endl;}
+    Student(std::string name, int age, Gender gender, float weight, int year) :
+        Person(name, age, gender, weight), m_year(year) {
+        count_stud++;
+    }
+
+    ~Student() { count_stud--; }
+
+    static void printCount() {
+        std::cout << "Number of students: " << count_stud << std::endl;
+    }
+
+    void setYear(int year = 0) { m_year = year; }
+
+    void increaseYear() { m_year++; }
+
+    void print() const{
+        Person::print();
+        std::cout << "Year of study: " << m_year << std::endl;
+    }
 };
 
-class Stack {
+//Task 2
+
+class Fruit
+{
 private:
-    int arr[10];
-    int len;
+    std::string m_name;
+    std::string m_color;
 public:
-    void reset() {
-        len = 0;
-        for (int i = 0; i < 10; i++) {
-            arr[i] = 0;
-        }
-    }
-    bool push(int a) {
-        if (len == 10) return false;
-        else {
-            arr[len++] = a;
-            return true;
-        }
-    }
-    int pop() {
-        int s;
-        if (len == 0) {
-            std::cout << "Warning! Stack is empty" << std::endl;
-            return 0;
-        }
-        else {
-            s = arr[len - 1];
-            arr[len - 1] = 0;
-            --len;
-            return s;
-        }
-    }
-    void print() {
-        std::cout << "( ";
-        for (int i = 0; i < len; i++) {
-            std::cout << arr[i] << " ";
-        }
-        std::cout << ")" << std::endl;
+    void setName(std::string name) { m_name = name; }
+    void setColor(std::string color) { m_color = color; }
+    const std::string& getName() const { return m_name; }
+    const std::string& getColor() const { return m_color; }
+};
+
+class Apple : public Fruit {
+public:
+    Apple(std::string color = "") {
+        setName("Apple");
+        setColor(color);
     }
 };
+
+class Banana : public Fruit {
+public:
+    Banana(std::string color = "") {
+        setName("Banana");
+        setColor("yellow");
+    }
+};
+
+class GrannySmith : public Apple {
+public:
+    GrannySmith() {
+        setName("Granny Smith " + Apple::getName());
+        Apple::setColor("green");
+    }
+};
+
+int Student::count_stud = 0;
 
 int main()
 {
-    Power power;
-    power.calculate();
-    power.set(3, 3);
-    power.calculate();
-    RGBA rgba(4, 8, 5);
-    rgba.print();
-    Stack stack;
-    stack.reset();
-    stack.print();
+    //Task 1
+    Student Jan("Jan", 22, men, 81.1, 2015);
+    Student Mateusz("Mateusz", 18, men, 78.4, 2015);
+    Jan.print();
+    Mateusz.print();
+    Jan.increaseYear();
+    Mateusz.setYear(2017);
+    Jan.print();
+    Mateusz.print();
+    Student::printCount();
+    Student Monika("Monika", 19, women, 55.1, 2016);
+    Student Krzysztof("Krzysztof", 20, men, 78.2, 2015);
+    Student Jozef("Jozef", 23, men, 67.9, 2015);
+    Student::printCount();
 
-    stack.push(3);
-    stack.push(7);
-    stack.push(5);
-    stack.print();
+    //Task 2
+    Apple a("red");
+    Banana b;
+    GrannySmith c;
+    std::cout << "My " << a.getName() << " is " << a.getColor() << ".\n";
+    std::cout << "My " << b.getName() << " is " << b.getColor() << ".\n";
+    std::cout << "My " << c.getName() << " is " << c.getColor() << ".\n";
 
-    stack.pop();
-    stack.print();
+    //Task 3
+    /*
 
-    stack.pop();
-    stack.pop();
-    stack.print();
+    Базовые классы:
 
+    класс: Карта
+    переменные-члены: значение очков, масть.
+
+    класс: Колода
+    переменные-члены: ссылки на обьекты класса Карта.
+
+    класс: Набор карт
+    переменные-члены: ссылки на обьекты класса Карта каждого участника.
+
+    класс: Участник
+    переменные-члены: имя игрока.
+
+    класс: Игра
+    переменные-члены: ссылка на обьект класса Колода,
+    ссылка на обьект класса Игрок,
+    ссылка на обьект класса Дилер.
+
+
+    Производные классы:
+
+    класс: Игрок (наследует от класса Участник)
+    класс: Дилер (наследует от класса Участник)
+
+    */
     return 0;
 }
